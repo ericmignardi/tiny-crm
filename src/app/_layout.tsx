@@ -5,30 +5,43 @@ import { useEffect } from "react";
 import { AuthProvider } from "../../context/auth-context";
 import { PeopleProvider } from "../../context/people-context";
 import "../../global.css";
+import { useAuth } from "../../hooks/useAuth";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function RootNavigator() {
+  const { session, loading } = useAuth();
   const [loaded, error] = useFonts({
     "Inter-Regular": Inter_400Regular,
   });
 
   useEffect(() => {
-    if (loaded || error) {
+    if ((loaded || error) && !loading) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [loaded, error, loading]);
 
-  if (!loaded && !error) {
+  if ((!loaded && !error) || loading) {
     return null;
   }
 
   return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(app)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <AuthProvider>
       <PeopleProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="add-person" options={{ presentation: "modal" }} />
-        </Stack>
+        <RootNavigator />
       </PeopleProvider>
     </AuthProvider>
   );

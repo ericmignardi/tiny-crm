@@ -1,5 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { createContext, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export type RelationshipType =
@@ -74,7 +74,7 @@ export const PeopleProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const findAllPeople = async (): Promise<PostgrestError | null> => {
+  const findAllPeople = useCallback(async (): Promise<PostgrestError | null> => {
     setLoading(true);
     setError(null);
     const { data, error } = await supabase
@@ -89,18 +89,18 @@ export const PeopleProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setLoading(false);
     return error;
-  };
+  }, []);
 
-  const findPersonById = async (id: string) => {
+  const findPersonById = useCallback(async (id: string) => {
     const { data, error } = await supabase
       .from("people")
       .select("*")
       .eq("id", id)
       .single();
     return { data: (data as Person | null) ?? null, error };
-  };
+  }, []);
 
-  const createPerson = async (input: PersonInput) => {
+  const createPerson = useCallback(async (input: PersonInput) => {
     const { data, error } = await supabase
       .from("people")
       .insert(input)
@@ -110,30 +110,36 @@ export const PeopleProvider = ({ children }: { children: React.ReactNode }) => {
       setPeople((current) => [...current, data as Person]);
     }
     return { data: (data as Person | null) ?? null, error };
-  };
+  }, []);
 
-  const updatePerson = async (id: string, updates: Partial<PersonInput>) => {
-    const { data, error } = await supabase
-      .from("people")
-      .update(updates)
-      .eq("id", id)
-      .select()
-      .single();
-    if (!error && data) {
-      setPeople((current) =>
-        current.map((p) => (p.id === id ? (data as Person) : p)),
-      );
-    }
-    return { data: (data as Person | null) ?? null, error };
-  };
+  const updatePerson = useCallback(
+    async (id: string, updates: Partial<PersonInput>) => {
+      const { data, error } = await supabase
+        .from("people")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+      if (!error && data) {
+        setPeople((current) =>
+          current.map((p) => (p.id === id ? (data as Person) : p)),
+        );
+      }
+      return { data: (data as Person | null) ?? null, error };
+    },
+    [],
+  );
 
-  const deletePerson = async (id: string): Promise<PostgrestError | null> => {
-    const { error } = await supabase.from("people").delete().eq("id", id);
-    if (!error) {
-      setPeople((current) => current.filter((p) => p.id !== id));
-    }
-    return error;
-  };
+  const deletePerson = useCallback(
+    async (id: string): Promise<PostgrestError | null> => {
+      const { error } = await supabase.from("people").delete().eq("id", id);
+      if (!error) {
+        setPeople((current) => current.filter((p) => p.id !== id));
+      }
+      return error;
+    },
+    [],
+  );
 
   return (
     <PeopleContext.Provider

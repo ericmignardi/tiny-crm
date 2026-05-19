@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { usePeople } from "../../hooks/usePeople";
+import { usePeople } from "../../../hooks/usePeople";
 
 const RELATIONSHIP_OPTIONS = [
   { value: "friend", label: "Friend" },

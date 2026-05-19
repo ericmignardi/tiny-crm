@@ -9,15 +9,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { PeopleHeader } from "../../../components/people/people-header";
-import { useAuth } from "../../../hooks/useAuth";
-import { usePeople } from "../../../hooks/usePeople";
+import { PeopleHeader } from "../../../../components/people/people-header";
+import { usePeople } from "../../../../hooks/usePeople";
 
 export default function People() {
   const [search, setSearch] = useState<string>("");
   const [filter, setFilter] = useState<string>("");
 
-  const { loading: authLoading } = useAuth();
   const { people, loading, error, findAllPeople } = usePeople();
 
   useFocusEffect(
@@ -37,7 +35,7 @@ export default function People() {
     return matchesFilter && matchesSearch;
   });
 
-  if (authLoading || loading) {
+  if (loading) {
     return <ActivityIndicator />;
   }
 

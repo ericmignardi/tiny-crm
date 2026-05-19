@@ -3,13 +3,13 @@ import { useFocusEffect } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TodayBirthday from "../../../components/today/today-birthday";
-import TodayCheckIn from "../../../components/today/today-check-in";
-import TodayHeader from "../../../components/today/today-header";
-import TodayReminder from "../../../components/today/today-reminder";
-import { Person } from "../../../context/people-context";
-import { useAuth } from "../../../hooks/useAuth";
-import { usePeople } from "../../../hooks/usePeople";
+import TodayBirthday from "../../../../components/today/today-birthday";
+import TodayCheckIn from "../../../../components/today/today-check-in";
+import TodayHeader from "../../../../components/today/today-header";
+import TodayReminder from "../../../../components/today/today-reminder";
+import { Person } from "../../../../context/people-context";
+import { useAuth } from "../../../../hooks/useAuth";
+import { usePeople } from "../../../../hooks/usePeople";
 
 const BIRTHDAY_WINDOW_DAYS = 30;
 
@@ -63,7 +63,7 @@ export default function Today() {
       );
   }, [people, today]);
 
-  if (!session || loading) {
+  if (loading || !session) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
         <ActivityIndicator />
