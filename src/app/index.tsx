@@ -1,17 +1,22 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Redirect } from "expo-router";
+import React from "react";
+import { ActivityIndicator, View } from "react-native";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
+  const { session, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return session ? (
+    <Redirect href="/(app)/today" />
+  ) : (
+    <Redirect href="/(auth)/sign-in" />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
