@@ -63,6 +63,7 @@ type PeopleContextType = {
     updates: Partial<PersonInput>,
   ) => Promise<{ data: Person | null; error: PostgrestError | null }>;
   deletePerson: (id: string) => Promise<PostgrestError | null>;
+  applyLastContactedAt: (id: string, lastContactedAt: string) => void;
 };
 
 export const PeopleContext = createContext<PeopleContextType | undefined>(
@@ -141,6 +142,21 @@ export const PeopleProvider = ({ children }: { children: React.ReactNode }) => {
     [],
   );
 
+  const applyLastContactedAt = useCallback(
+    (id: string, lastContactedAt: string) => {
+      setPeople((current) =>
+        current.map((p) => {
+          if (p.id !== id) return p;
+          if (p.last_contacted_at && p.last_contacted_at >= lastContactedAt) {
+            return p;
+          }
+          return { ...p, last_contacted_at: lastContactedAt };
+        }),
+      );
+    },
+    [],
+  );
+
   return (
     <PeopleContext.Provider
       value={{
@@ -152,6 +168,7 @@ export const PeopleProvider = ({ children }: { children: React.ReactNode }) => {
         createPerson,
         updatePerson,
         deletePerson,
+        applyLastContactedAt,
       }}
     >
       {children}

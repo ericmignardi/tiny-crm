@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { AuthProvider } from "../../context/auth-context";
+import { InteractionsProvider } from "../../context/interactions-context";
 import { PeopleProvider } from "../../context/people-context";
 import "../../global.css";
 import { useAuth } from "../../hooks/useAuth";
@@ -41,7 +42,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <PeopleProvider>
-        <RootNavigator />
+        <InteractionsProvider>
+          <RootNavigator />
+        </InteractionsProvider>
       </PeopleProvider>
     </AuthProvider>
   );

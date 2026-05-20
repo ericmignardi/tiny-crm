@@ -14,6 +14,10 @@ export default function AppLayout() {
         name="edit-person/[id]"
         options={{ presentation: "modal" }}
       />
+      <Stack.Screen
+        name="log-interaction/[id]"
+        options={{ presentation: "modal" }}
+      />
     </Stack>
   );
 }

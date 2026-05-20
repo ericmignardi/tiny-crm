@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React from "react";
+import { router } from "expo-router";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type PeopleHeaderProps = {
@@ -10,7 +10,7 @@ type PeopleHeaderProps = {
 };
 
 const FILTER_OPTIONS = [
-  { type: "", label: "All Connections" },
+  { type: "", label: "All" },
   { type: "friend", label: "Friends" },
   { type: "family", label: "Family" },
   { type: "work", label: "Colleagues" },
@@ -24,6 +24,17 @@ export const PeopleHeader = ({
 }: PeopleHeaderProps) => {
   return (
     <View className="flex flex-col gap-4">
+      <View className="flex flex-row items-center justify-between">
+        <Text className="text-3xl font-semibold">People</Text>
+        <TouchableOpacity
+          onPress={() => router.push("/add-person")}
+          className="rounded-full bg-primary p-2"
+          accessibilityLabel="Add person"
+        >
+          <Ionicons name="person-add" size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
       <View className="flex flex-row items-center gap-2 rounded-full bg-background border border-gray-300 px-4 py-2">
         <Ionicons name="search" size={20} color="#888" />
         <TextInput
@@ -34,13 +45,13 @@ export const PeopleHeader = ({
         />
       </View>
 
-      <View className="flex flex-row gap-2 items-center">
+      <View className="flex flex-row gap-2 items-center flex-wrap">
         {FILTER_OPTIONS.map((filterOption) => {
           const isActive = filter === filterOption.type;
           return (
             <TouchableOpacity
               key={filterOption.type}
-              className={`rounded-full px-2 py-2 ${isActive ? "bg-primary" : "bg-gray-300"}`}
+              className={`rounded-full px-3 py-2 ${isActive ? "bg-primary" : "bg-gray-300"}`}
               onPress={() => onFilterChange(filterOption.type)}
             >
               <Text className="text-background">{filterOption.label}</Text>

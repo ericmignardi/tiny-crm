@@ -1,50 +1,34 @@
-import { addDays, addYears, isBefore, parseISO, startOfDay } from "date-fns";
+import { addDays, isBefore } from "date-fns";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TodayBirthday from "../../../../components/today/today-birthday";
 import TodayCheckIn from "../../../../components/today/today-check-in";
 import TodayHeader from "../../../../components/today/today-header";
-import TodayReminder from "../../../../components/today/today-reminder";
+import TodayStartHabit from "../../../../components/today/today-start-habit";
 import { Person } from "../../../../context/people-context";
+import { nextBirthdayDate, todayStart } from "../../../../lib/dates";
+import { partitionFollowUps } from "../../../../lib/followups";
 import { useAuth } from "../../../../hooks/useAuth";
 import { usePeople } from "../../../../hooks/usePeople";
 
 const BIRTHDAY_WINDOW_DAYS = 30;
 
-const isDueForCheckIn = (p: Person, today: Date): boolean => {
-  if (!p.follow_up_interval_days) return false;
-  if (!p.last_contacted_at) return true;
-  const last = startOfDay(parseISO(p.last_contacted_at));
-  const due = addDays(last, p.follow_up_interval_days);
-  return !isBefore(today, due);
-};
-
-const nextBirthdayDate = (birthday: string, today: Date): Date => {
-  const parsed = startOfDay(parseISO(birthday));
-  const thisYear = new Date(
-    today.getFullYear(),
-    parsed.getMonth(),
-    parsed.getDate(),
-  );
-  return isBefore(thisYear, today) ? addYears(thisYear, 1) : thisYear;
-};
-
 export default function Today() {
   const { session } = useAuth();
-  const { people, loading, findAllPeople } = usePeople();
+  const { people, loading, error, findAllPeople } = usePeople();
 
   useFocusEffect(
     useCallback(() => {
       findAllPeople();
-    }, []),
+    }, [findAllPeople]),
   );
 
-  const today = useMemo(() => startOfDay(new Date()), []);
+  const today = useMemo(() => todayStart(), []);
 
-  const checkInPeople = useMemo(
-    () => people.filter((p) => isDueForCheckIn(p, today)),
+  const { checkIn, startHabit } = useMemo(
+    () => partitionFollowUps(people, today),
     [people, today],
   );
 
@@ -52,10 +36,7 @@ export default function Today() {
     const windowEnd = addDays(today, BIRTHDAY_WINDOW_DAYS);
     return people
       .filter((p): p is Person & { birthday: string } => Boolean(p.birthday))
-      .filter((p) => {
-        const next = nextBirthdayDate(p.birthday, today);
-        return !isBefore(windowEnd, next);
-      })
+      .filter((p) => !isBefore(windowEnd, nextBirthdayDate(p.birthday, today)))
       .sort(
         (a, b) =>
           nextBirthdayDate(a.birthday, today).getTime() -
@@ -63,7 +44,7 @@ export default function Today() {
       );
   }, [people, today]);
 
-  if (loading || !session) {
+  if ((loading && people.length === 0) || !session) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
         <ActivityIndicator />
@@ -76,8 +57,14 @@ export default function Today() {
       <ScrollView className="flex-1">
         <TodayHeader session={session} />
 
-        {checkInPeople.length > 0 ? (
-          <TodayCheckIn peopleCheckIn={checkInPeople} />
+        {error && people.length === 0 && (
+          <View className="px-4">
+            <Text className="text-red-500">{error}</Text>
+          </View>
+        )}
+
+        {checkIn.length > 0 ? (
+          <TodayCheckIn peopleCheckIn={checkIn} />
         ) : (
           <View className="p-4">
             <Text className="text-2xl font-semibold mb-2">
@@ -88,6 +75,8 @@ export default function Today() {
             </Text>
           </View>
         )}
+
+        {startHabit.length > 0 && <TodayStartHabit people={startHabit} />}
 
         {birthdayPeople.length > 0 ? (
           <TodayBirthday peopleBirthday={birthdayPeople} />
@@ -101,8 +90,6 @@ export default function Today() {
             </Text>
           </View>
         )}
-
-        <TodayReminder peopleReminder={[]} />
       </ScrollView>
     </SafeAreaView>
   );

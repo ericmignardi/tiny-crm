@@ -1,25 +1,23 @@
-import React from "react";
-import { FlatList, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import TodayBirthdayCard from "./today-birthday-card";
+
+type BirthdayPerson = {
+  id: string;
+  name: string;
+  birthday: string;
+};
 
 export default function TodayBirthday({
   peopleBirthday,
 }: {
-  peopleBirthday: any[];
+  peopleBirthday: BirthdayPerson[];
 }) {
   return (
-    <View className="p-4">
-      <FlatList
-        ListHeaderComponent={() => (
-          <Text className="text-2xl font-semibold mb-4">
-            Upcoming Birthdays
-          </Text>
-        )}
-        data={peopleBirthday}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <TodayBirthdayCard item={item} />}
-        ItemSeparatorComponent={() => <View className="h-4"></View>}
-      />
+    <View className="p-4 flex flex-col gap-4">
+      <Text className="text-2xl font-semibold">Upcoming Birthdays</Text>
+      {peopleBirthday.map((person) => (
+        <TodayBirthdayCard key={person.id} item={person} />
+      ))}
     </View>
   );
 }
