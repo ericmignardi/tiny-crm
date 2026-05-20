@@ -1,68 +1,25 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { Tabs } from "expo-router";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 
 export default function TabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#2F6F73",
-        tabBarInactiveTintColor: "#8A6FAD",
-      }}
-    >
-      <Tabs.Screen
-        name="today"
-        options={{
-          title: "Today",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "today" : "today-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="people"
-        options={{
-          title: "People",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "person" : "person-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="reminders"
-        options={{
-          title: "Reminders",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "notifications" : "notifications-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "cog" : "cog-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+    <NativeTabs>
+      <NativeTabs.Trigger name="today">
+        <NativeTabs.Trigger.Label>Today</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="house.fill" md="home" />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="people">
+        <NativeTabs.Trigger.Icon sf="person" md="person" />
+        <NativeTabs.Trigger.Label>People</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="reminders">
+        <NativeTabs.Trigger.Icon sf="bell" md="notifications" />
+        <NativeTabs.Trigger.Label>Reminders</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="settings">
+        <NativeTabs.Trigger.Icon sf="gear" md="settings" />
+        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
