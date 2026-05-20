@@ -18,6 +18,10 @@ export default function AppLayout() {
         name="log-interaction/[id]"
         options={{ presentation: "modal" }}
       />
+      <Stack.Screen
+        name="reminders/new"
+        options={{ presentation: "modal" }}
+      />
     </Stack>
   );
 }

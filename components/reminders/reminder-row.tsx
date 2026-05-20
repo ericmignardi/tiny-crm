@@ -1,9 +1,10 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { format, isPast, parseISO } from "date-fns";
-import { Text, TouchableOpacity, View } from "react-native";
+import { format, parseISO } from "date-fns";
 import { Reminder } from "../../context/reminders-context";
 
-type TodayReminderCardProps = {
+import { Text, TouchableOpacity, View } from "react-native";
+
+type ReminderRowProps = {
   reminder: Reminder;
   personName: string | undefined;
   onComplete: () => void;
@@ -11,34 +12,26 @@ type TodayReminderCardProps = {
   updating?: boolean;
 };
 
-export default function TodayReminderCard({
+export function ReminderRow({
   reminder,
   personName,
   onComplete,
   onDismiss,
   updating,
-}: TodayReminderCardProps) {
-  const at = parseISO(reminder.remind_at);
-  const overdue = isPast(at);
-
+}: ReminderRowProps) {
   return (
-    <View className="p-4 border border-gray-300 rounded-2xl flex flex-col gap-3">
-      <View className="flex flex-row gap-4 items-start">
-        <View className="size-12 rounded-full bg-yellow-100 flex justify-center items-center">
-          <Ionicons name="notifications" size={20} color="#FBBF24" />
+    <View className="rounded-2xl bg-backgroundCard shadow-md p-4 flex flex-col gap-3">
+      <View className="flex flex-row items-start gap-3">
+        <View className="rounded-full size-10 bg-primary items-center justify-center">
+          <Ionicons name="notifications" size={18} color="#fff" />
         </View>
         <View className="flex-1">
-          <Text className="text-base font-semibold">{reminder.title}</Text>
+          <Text className="font-semibold text-base">{reminder.title}</Text>
           <Text className="text-sm text-textMuted">
             {personName ? `${personName} · ` : ""}
-            {format(at, "MMM d 'at' h:mm a")}
+            {format(parseISO(reminder.remind_at), "MMM d, yyyy 'at' h:mm a")}
           </Text>
         </View>
-        {overdue && (
-          <View className="rounded-full px-3 py-1 bg-red-100">
-            <Text className="text-xs text-red-700">Overdue</Text>
-          </View>
-        )}
       </View>
       <View className="flex flex-row gap-2">
         <TouchableOpacity

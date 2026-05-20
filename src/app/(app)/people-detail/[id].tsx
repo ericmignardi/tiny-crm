@@ -158,7 +158,19 @@ export default function PeopleDetail() {
               className="flex-1 rounded-full px-4 py-3 bg-primary flex flex-row items-center justify-center gap-2"
             >
               <Ionicons name="chatbubble-ellipses" size={16} color="#fff" />
-              <Text className="text-background font-semibold">Log interaction</Text>
+              <Text className="text-background font-semibold">Log</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/reminders/new",
+                  params: { personId: person.id },
+                })
+              }
+              className="rounded-full p-3 bg-gray-200"
+              accessibilityLabel="Create reminder"
+            >
+              <Ionicons name="notifications" size={18} color="#374151" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push(`/edit-person/${person.id}`)}

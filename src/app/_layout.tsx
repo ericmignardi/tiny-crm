@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { AuthProvider } from "../../context/auth-context";
 import { InteractionsProvider } from "../../context/interactions-context";
 import { PeopleProvider } from "../../context/people-context";
+import { RemindersProvider } from "../../context/reminders-context";
 import "../../global.css";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -43,7 +44,9 @@ export default function RootLayout() {
     <AuthProvider>
       <PeopleProvider>
         <InteractionsProvider>
-          <RootNavigator />
+          <RemindersProvider>
+            <RootNavigator />
+          </RemindersProvider>
         </InteractionsProvider>
       </PeopleProvider>
     </AuthProvider>
