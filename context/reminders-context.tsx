@@ -1,5 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export type ReminderStatus = "pending" | "completed" | "dismissed";
@@ -47,6 +47,21 @@ export const RemindersProvider = ({
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        setReminders([]);
+        setError(null);
+        setLoading(false);
+      }
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const findAllReminders = useCallback(async (): Promise<PostgrestError | null> => {
     setLoading(true);

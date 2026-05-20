@@ -1,6 +1,6 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { parseISO } from "date-fns";
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export type InteractionType =
@@ -68,6 +68,21 @@ export const InteractionsProvider = ({
   const [errorByPerson, setErrorByPerson] = useState<
     Record<string, string | null>
   >({});
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        setInteractionsByPerson({});
+        setLoadingByPerson({});
+        setErrorByPerson({});
+      }
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const findInteractionsByPersonId = useCallback(
     async (personId: string): Promise<PostgrestError | null> => {

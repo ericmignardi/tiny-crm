@@ -1,5 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 export type RelationshipType =
@@ -76,6 +76,21 @@ export const PeopleProvider = ({ children }: { children: React.ReactNode }) => {
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        setPeople([]);
+        setError(null);
+        setLoading(false);
+      }
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const findAllPeople = useCallback(async (): Promise<PostgrestError | null> => {
     setLoading(true);

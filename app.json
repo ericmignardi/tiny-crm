@@ -8,7 +8,11 @@
     "scheme": "tinycrm",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Pick a photo for a contact's avatar.",
+        "NSCameraUsageDescription": "Take a photo for a contact's avatar."
+      }
     },
     "android": {
       "adaptiveIcon": {
