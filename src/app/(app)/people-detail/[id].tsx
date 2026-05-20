@@ -180,6 +180,13 @@ export default function PeopleDetail() {
         )}
 
         <TouchableOpacity
+          onPress={() => router.push(`/edit-person/${person.id}`)}
+          className="rounded-full px-4 py-2 w-full bg-primary"
+        >
+          <Text className="text-background text-center">Edit</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           onPress={handleDelete}
           disabled={deleting}
           className={`rounded-full px-4 py-2 w-full ${deleting ? "bg-gray-300" : "bg-red-500"}`}

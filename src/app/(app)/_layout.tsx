@@ -10,6 +10,10 @@ export default function AppLayout() {
         name="add-person"
         options={{ presentation: "modal" }}
       />
+      <Stack.Screen
+        name="edit-person/[id]"
+        options={{ presentation: "modal" }}
+      />
     </Stack>
   );
 }
