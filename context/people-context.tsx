@@ -31,6 +31,7 @@ export type Person = {
   preferred_contact_method: ContactMethod | null;
   follow_up_interval_days: number | null;
   last_contacted_at: string | null;
+  avatar_url: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -45,6 +46,7 @@ export type PersonInput = {
   preferred_contact_method?: ContactMethod | null;
   follow_up_interval_days?: number | null;
   last_contacted_at?: string | null;
+  avatar_url?: string | null;
 };
 
 type PeopleContextType = {

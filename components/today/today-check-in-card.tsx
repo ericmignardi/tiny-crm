@@ -1,6 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
+import { Avatar } from "../avatar-picker";
 import { formatRelativeDate } from "../../lib/dates";
 import { CheckInPerson, overdueLabel } from "../../lib/followups";
 
@@ -12,7 +13,7 @@ export default function TodayCheckInCard({ item }: { item: CheckInPerson }) {
     <View className="p-4 border border-gray-300 rounded-2xl flex flex-col gap-4">
       <View className="flex flex-row items-start justify-between">
         <View className="flex flex-row gap-4 items-center flex-1">
-          <View className="rounded-full size-16 bg-blue-400" />
+          <Avatar avatarUrl={item.avatar_url} name={item.name} size={64} />
           <View className="flex flex-col gap-1 flex-1">
             <Text className="text-xl font-semibold">{item.name}</Text>
             {item.relationship_type && (

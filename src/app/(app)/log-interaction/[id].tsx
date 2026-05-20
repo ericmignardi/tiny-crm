@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { DateTimePickerInput } from "../../../../components/date-time-picker-input";
 import {
   Interaction,
   InteractionType,
@@ -28,33 +29,10 @@ const INTERACTION_OPTIONS: { value: InteractionType; label: string; icon: keyof 
   { value: "other", label: "Other", icon: "ellipsis-horizontal-outline" },
 ];
 
-const pad = (n: number): string => n.toString().padStart(2, "0");
-
-const formatInputDate = (date: Date): string =>
-  `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()}`;
-
-const formatInputTime = (date: Date): string =>
-  `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-
-const parseInputs = (
-  dateStr: string,
-  timeStr: string,
-): Date | null => {
-  const dateMatch = dateStr.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  const timeMatch = timeStr.trim().match(/^(\d{1,2}):(\d{2})$/);
-  if (!dateMatch || !timeMatch) return null;
-  const [, mm, dd, yyyy] = dateMatch;
-  const [, hh, mins] = timeMatch;
-  const result = new Date(
-    Number(yyyy),
-    Number(mm) - 1,
-    Number(dd),
-    Number(hh),
-    Number(mins),
-    0,
-    0,
-  );
-  return Number.isNaN(result.getTime()) ? null : result;
+const combineDateAndTime = (date: Date, time: Date): Date => {
+  const result = new Date(date);
+  result.setHours(time.getHours(), time.getMinutes(), 0, 0);
+  return result;
 };
 
 export default function LogInteraction() {
@@ -69,8 +47,8 @@ export default function LogInteraction() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [type, setType] = useState<InteractionType>("text");
-  const [dateStr, setDateStr] = useState<string>(formatInputDate(initialDate));
-  const [timeStr, setTimeStr] = useState<string>(formatInputTime(initialDate));
+  const [date, setDate] = useState<Date | null>(initialDate);
+  const [time, setTime] = useState<Date | null>(initialDate);
   const [notes, setNotes] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -96,15 +74,12 @@ export default function LogInteraction() {
 
   const handleSave = async () => {
     if (!person) return;
-
-    const happenedAt = parseInputs(dateStr, timeStr);
-    if (!happenedAt) {
-      Alert.alert(
-        "Invalid date or time",
-        "Please use mm/dd/yyyy for the date and HH:MM (24h) for the time.",
-      );
+    if (!date || !time) {
+      Alert.alert("Date and time required", "Please choose when this happened.");
       return;
     }
+
+    const happenedAt = combineDateAndTime(date, time);
 
     if (happenedAt.getTime() > Date.now() + 60_000) {
       Alert.alert(
@@ -188,21 +163,16 @@ export default function LogInteraction() {
         <View className="flex flex-row gap-4 mb-4">
           <View className="flex-1 flex flex-col gap-2">
             <Text className="text-lg font-semibold">Date</Text>
-            <TextInput
-              value={dateStr}
-              onChangeText={setDateStr}
-              className="border focus:outline-none border-textMuted px-4 py-2 rounded-md"
-              placeholder="mm/dd/yyyy"
+            <DateTimePickerInput
+              mode="date"
+              value={date}
+              onChange={setDate}
+              maximumDate={new Date()}
             />
           </View>
           <View className="flex-1 flex flex-col gap-2">
             <Text className="text-lg font-semibold">Time</Text>
-            <TextInput
-              value={timeStr}
-              onChangeText={setTimeStr}
-              className="border focus:outline-none border-textMuted px-4 py-2 rounded-md"
-              placeholder="HH:MM"
-            />
+            <DateTimePickerInput mode="time" value={time} onChange={setTime} />
           </View>
         </View>
 

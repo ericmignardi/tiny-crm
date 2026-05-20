@@ -4,10 +4,12 @@ import { ActivityIndicator, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PersonForm } from "../../../../components/people/person-form";
 import { Person } from "../../../../context/people-context";
+import { useAuth } from "../../../../hooks/useAuth";
 import { usePeople } from "../../../../hooks/usePeople";
 
 export default function EditPerson() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { session } = useAuth();
   const { findPersonById, updatePerson } = usePeople();
 
   const [person, setPerson] = useState<Person | null>(null);
@@ -34,7 +36,7 @@ export default function EditPerson() {
     };
   }, [id, findPersonById]);
 
-  if (loading) {
+  if (loading || !session) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
         <ActivityIndicator />
@@ -55,7 +57,8 @@ export default function EditPerson() {
       <PersonForm
         initialValues={person}
         submitLabel="Save changes"
-        photoLabel="Change photo"
+        userId={session.user.id}
+        entityId={person.id}
         onSubmit={async (values) => {
           const { error } = await updatePerson(person.id, values);
           return { error };

@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Avatar } from "../../../../components/avatar-picker";
 import { InteractionTimeline } from "../../../../components/people/interaction-timeline";
 import { Person } from "../../../../context/people-context";
 import { formatBirthdayShort, formatRelativeDate } from "../../../../lib/dates";
@@ -143,7 +144,7 @@ export default function PeopleDetail() {
       <ScrollView className="flex-1 p-4">
         <View className="flex flex-col gap-4">
           <View className="flex flex-col items-center gap-3">
-            <View className="rounded-full size-28 bg-primary" />
+            <Avatar avatarUrl={person.avatar_url} name={person.name} size={112} />
             <Text className="text-2xl font-bold">{person.name}</Text>
             {person.relationship_type && (
               <Text className="rounded-full text-sm text-background bg-primary px-4 py-2 capitalize">

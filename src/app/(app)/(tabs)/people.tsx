@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Avatar } from "../../../../components/avatar-picker";
 import { PeopleHeader } from "../../../../components/people/people-header";
 import { formatRelativeDate, todayStart } from "../../../../lib/dates";
 import { isDueForFollowUp, overdueLabel } from "../../../../lib/followups";
@@ -90,7 +91,8 @@ export default function People() {
                   onPress={() => router.push(`/people-detail/${item.id}`)}
                   className="rounded-2xl shadow-md p-4 bg-backgroundCard mt-4"
                 >
-                  <View className="flex flex-row items-start justify-between gap-2">
+                  <View className="flex flex-row items-start gap-3">
+                    <Avatar avatarUrl={item.avatar_url} name={item.name} size={48} />
                     <View className="flex-1">
                       <Text className="text-lg font-semibold">{item.name}</Text>
                       {item.relationship_type && (

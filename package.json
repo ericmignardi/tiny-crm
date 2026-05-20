@@ -8,16 +8,19 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "gen:types": "supabase gen types typescript --linked > types/database.ts"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
     "@react-native-async-storage/async-storage": "^3.0.2",
+    "@react-native-community/datetimepicker": "8.6.0",
     "@react-navigation/bottom-tabs": "^7.15.5",
     "@react-navigation/elements": "^2.9.10",
     "@react-navigation/native": "^7.1.33",
     "@supabase/supabase-js": "^2.105.4",
     "babel-preset-expo": "^55.0.21",
+    "base64-arraybuffer": "^1.0.2",
     "date-fns": "^4.2.1",
     "expo": "~55.0.24",
     "expo-constants": "~55.0.16",
@@ -25,6 +28,7 @@
     "expo-font": "~55.0.7",
     "expo-glass-effect": "~55.0.11",
     "expo-image": "~55.0.10",
+    "expo-image-picker": "~55.0.20",
     "expo-linking": "~55.0.15",
     "expo-router": "~55.0.14",
     "expo-splash-screen": "~55.0.21",

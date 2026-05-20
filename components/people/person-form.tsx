@@ -1,4 +1,3 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import {
   Alert,
@@ -9,6 +8,8 @@ import {
   View,
 } from "react-native";
 import { PersonInput } from "../../context/people-context";
+import { AvatarPicker } from "../avatar-picker";
+import { DateTimePickerInput } from "../date-time-picker-input";
 
 const RELATIONSHIP_OPTIONS = [
   { value: "friend", label: "Friend" },
@@ -43,31 +44,30 @@ export type PersonFormInitialValues = {
   preferred_contact_method?: string | null;
   follow_up_interval_days?: number | null;
   notes?: string | null;
+  avatar_url?: string | null;
 };
 
 type PersonFormProps = {
   initialValues?: PersonFormInitialValues;
   submitLabel: string;
-  photoLabel?: string;
+  userId: string;
+  entityId: string;
   onSubmit: (values: PersonInput) => Promise<{ error: { message: string } | null }>;
   onSuccess: () => void;
 };
 
-const birthdayToIso = (input: string): string | null => {
-  const trimmed = input.trim();
-  if (!trimmed) return null;
-  const match = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+const isoToDate = (iso: string | null | undefined): Date | null => {
+  if (!iso) return null;
+  const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!match) return null;
-  const [, mm, dd, yyyy] = match;
-  return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+  const [, yyyy, mm, dd] = match;
+  return new Date(Number(yyyy), Number(mm) - 1, Number(dd));
 };
 
-const isoToBirthday = (iso: string | null | undefined): string => {
-  if (!iso) return "";
-  const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!match) return "";
-  const [, yyyy, mm, dd] = match;
-  return `${mm}/${dd}/${yyyy}`;
+const dateToIso = (date: Date | null): string | null => {
+  if (!date) return null;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 };
 
 const coerceRelationship = (value?: string | null): RelationshipType | "" =>
@@ -86,16 +86,20 @@ const coerceCadence = (value?: number | null): CadenceDays | null =>
 export function PersonForm({
   initialValues,
   submitLabel,
-  photoLabel = "Add photo",
+  userId,
+  entityId,
   onSubmit,
   onSuccess,
 }: PersonFormProps) {
   const [name, setName] = useState<string>(initialValues?.name ?? "");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    initialValues?.avatar_url ?? null,
+  );
   const [relationship, setRelationship] = useState<RelationshipType | "">(
     coerceRelationship(initialValues?.relationship_type),
   );
-  const [birthday, setBirthday] = useState<string>(
-    isoToBirthday(initialValues?.birthday),
+  const [birthday, setBirthday] = useState<Date | null>(
+    isoToDate(initialValues?.birthday),
   );
   const [phone, setPhone] = useState<string>(initialValues?.phone ?? "");
   const [email, setEmail] = useState<string>(initialValues?.email ?? "");
@@ -114,25 +118,17 @@ export function PersonForm({
       return;
     }
 
-    let birthdayIso: string | null = null;
-    if (birthday.trim()) {
-      birthdayIso = birthdayToIso(birthday);
-      if (!birthdayIso) {
-        Alert.alert("Invalid birthday", "Please use mm/dd/yyyy format.");
-        return;
-      }
-    }
-
     setSaving(true);
     const { error } = await onSubmit({
       name: name.trim(),
       relationship_type: relationship || null,
-      birthday: birthdayIso,
+      birthday: dateToIso(birthday),
       phone: phone.trim() || null,
       email: email.trim() || null,
       preferred_contact_method: contactMethod || null,
       follow_up_interval_days: cadenceDays,
       notes: notes.trim() || null,
+      avatar_url: avatarUrl,
     });
     setSaving(false);
 
@@ -146,12 +142,13 @@ export function PersonForm({
 
   return (
     <ScrollView className="flex-1 bg-backgroundCard rounded-2xl p-4 gap-4">
-      <View className="flex flex-col items-center gap-2">
-        <View className="rounded-full size-24 bg-primary flex items-center justify-center">
-          <Ionicons name="person" size={24} className="text-background" />
-        </View>
-        <Text>{photoLabel}</Text>
-      </View>
+      <AvatarPicker
+        avatarUrl={avatarUrl}
+        userId={userId}
+        kind="person"
+        entityId={entityId}
+        onUploaded={setAvatarUrl}
+      />
 
       <View className="flex flex-col gap-2 mb-4">
         <Text className="text-lg font-semibold">Name</Text>
@@ -185,11 +182,13 @@ export function PersonForm({
 
       <View className="flex flex-col gap-2 mb-4">
         <Text className="text-lg font-semibold">Birthday</Text>
-        <TextInput
+        <DateTimePickerInput
+          mode="date"
           value={birthday}
-          onChangeText={setBirthday}
-          className="border focus:outline-none border-textMuted px-4 py-2 rounded-md"
-          placeholder="mm/dd/yyyy"
+          onChange={setBirthday}
+          placeholder="Add a birthday"
+          maximumDate={new Date()}
+          allowClear
         />
       </View>
 
