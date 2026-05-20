@@ -53,7 +53,9 @@ export default function SignUp() {
           disabled={submitting}
           className={`rounded-full px-4 py-3 ${submitting ? "bg-gray-300" : "bg-primary"}`}
         >
-          <Text className="text-background text-center font-medium">
+          <Text
+            className={`text-center font-medium ${submitting ? "text-gray-600" : "text-background"}`}
+          >
             {submitting ? "Creating..." : "Sign Up"}
           </Text>
         </TouchableOpacity>

@@ -132,6 +132,9 @@ export default function NewReminder() {
                       key={p.id}
                       onPress={() => setPersonId(p.id)}
                       className={`rounded-full px-4 py-2 ${isActive ? "bg-primary" : "bg-gray-300"}`}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isActive }}
+                      accessibilityLabel={`Reminder for ${p.name}`}
                     >
                       <Text className="text-background">{p.name}</Text>
                     </TouchableOpacity>
@@ -173,7 +176,9 @@ export default function NewReminder() {
           disabled={saving}
           className={`rounded-full px-4 py-3 w-full ${saving ? "bg-gray-300" : "bg-primary"}`}
         >
-          <Text className="text-background text-center font-medium">
+          <Text
+            className={`text-center font-medium ${saving ? "text-gray-600" : "text-background"}`}
+          >
             {saving ? "Saving..." : "Save reminder"}
           </Text>
         </TouchableOpacity>

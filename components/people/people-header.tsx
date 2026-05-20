@@ -53,6 +53,9 @@ export const PeopleHeader = ({
               key={filterOption.type}
               className={`rounded-full px-3 py-2 ${isActive ? "bg-primary" : "bg-gray-300"}`}
               onPress={() => onFilterChange(filterOption.type)}
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
+              accessibilityLabel={`Filter by ${filterOption.label}`}
             >
               <Text className="text-background">{filterOption.label}</Text>
             </TouchableOpacity>

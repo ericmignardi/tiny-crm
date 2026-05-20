@@ -6,6 +6,12 @@ A gentle relationship manager for remembering the people you care about, when yo
 
 Tiny CRM is a focused weekend MVP built around a single habit loop: add a person → log how you connected → let the app surface who is due for a check-in. It is intentionally **not** a sales tool — no leads, no pipelines, no scoring.
 
+## Screenshots
+
+| Today | People | Person detail |
+| --- | --- | --- |
+| ![Today screen](./docs/screenshots/today.png) | ![People list](./docs/screenshots/people.png) | ![Person detail](./docs/screenshots/person-detail.png) |
+
 ## Features
 
 - **Today** — people due for a check-in, an upcoming-birthday window, and pending reminders, with a warm empty state.
@@ -44,7 +50,11 @@ npm install
 
 ### 2. Configure environment
 
-Create `.env.local` in the project root:
+Copy the example file and fill in your Supabase project values:
+
+```bash
+cp .env.local.example .env.local
+```
 
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
@@ -60,11 +70,12 @@ supabase link --project-ref <project-ref>
 supabase db push
 ```
 
-This applies three migrations:
+This applies the migrations:
 
 - `20260519115924_init.sql` — `profiles`, `people`, `interactions`, `reminders` + RLS policies + a trigger that creates a profile row on sign-up.
 - `20260520120000_avatars_bucket.sql` — `avatars` storage bucket with per-user-folder write policies.
 - `20260520130000_people_avatar.sql` — `avatar_url` column on `people`.
+- `20260520140000_drop_unused_tags.sql` — drops unused `tags` and `person_tags` (postponed to v1.1).
 
 ### 4. Run
 

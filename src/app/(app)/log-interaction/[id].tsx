@@ -145,6 +145,9 @@ export default function LogInteraction() {
                   key={option.value}
                   onPress={() => setType(option.value)}
                   className={`rounded-full px-4 py-2 flex flex-row items-center gap-2 ${isActive ? "bg-primary" : "bg-gray-300"}`}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isActive }}
+                  accessibilityLabel={`Interaction type: ${option.label}`}
                 >
                   <Ionicons
                     name={option.icon}
@@ -192,7 +195,9 @@ export default function LogInteraction() {
           disabled={saving}
           className={`rounded-full px-4 py-2 w-full ${saving ? "bg-gray-300" : "bg-primary"}`}
         >
-          <Text className="text-background text-center">
+          <Text
+            className={`text-center ${saving ? "text-gray-600" : "text-background"}`}
+          >
             {saving ? "Saving..." : "Save interaction"}
           </Text>
         </TouchableOpacity>
